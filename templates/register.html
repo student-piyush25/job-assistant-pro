@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="min-h-screen flex items-center justify-center px-4 py-12">
+    <div class="max-w-md w-full bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
+        
+        <!-- Header -->
+        <div class="text-center mb-10">
+            <h2 class="text-3xl font-extrabold text-gray-900">Create Account</h2>
+            <p class="mt-2 text-sm text-gray-600">Join CareerBoost to build your resume and find jobs.</p>
+        </div>
+
+        <!-- Registration Form -->
+        <form action="{{ url_for('auth.register') }}" method="POST" class="space-y-6">
+            
+            <!-- Full Name Field -->
+            <div>
+                <label for="name" class="block text-sm font-medium text-gray-700">Full Name</label>
+                <div class="mt-1">
+                    <input id="name" name="name" type="text" required 
+                        placeholder="e.g. Rahul Sharma"
+                        class="appearance-none block w-full px-3 py-3 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                </div>
+            </div>
+
+            <!-- Email Field -->
+            <div>
+                <label for="email" class="block text-sm font-medium text-gray-700">Email Address</label>
+                <div class="mt-1">
+                    <input id="email" name="email" type="email" required 
+                        placeholder="rahul@example.com"
+                        class="appearance-none block w-full px-3 py-3 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                </div>
+            </div>
+
+            <!-- Password Field -->
+            <div>
+                <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+                <div class="mt-1">
+                    <input id="password" name="password" type="password" required 
+                        placeholder="••••••••"
+                        class="appearance-none block w-full px-3 py-3 border border-gray-300 rounded-lg shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm">
+                </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div>
+                <button type="submit" 
+                    class="w-full flex justify-center py-3 px-4 border border-transparent rounded-lg shadow-sm text-sm font-semibold text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 transition duration-150">
+                    Get Started
+                </button>
+            </div>
+        </form>
+
+        <!-- Login Link -->
+        <div class="mt-8 text-center">
+            <p class="text-sm text-gray-600">
+                Already have an account? 
+                <a href="{{ url_for('auth.login') }}" class="font-medium text-indigo-600 hover:text-indigo-500">
+                    Sign in here
+                </a>
+            </p>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

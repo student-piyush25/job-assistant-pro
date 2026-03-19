@@ -1,0 +1,6 @@
+services:
+  - type: web
+    name: careerboost-india
+    env: python
+    buildCommand: pip install -r requirements.txt
+    startCommand: python app.py

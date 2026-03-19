@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CareerBoost India - Job Assistant</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="bg-gray-50 flex flex-col min-h-screen">
+
+    <nav class="bg-white shadow-md">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                
+                <a href="{{ url_for('main.index') }}" class="text-2xl font-bold text-indigo-600">
+                    CareerBoost
+                </a>
+
+                <div class="flex items-center space-x-4">
+                    {% if current_user.is_authenticated %}
+                        <a href="{{ url_for('main.dashboard') }}" class="text-gray-700 hover:text-indigo-600 px-2 py-2 inline-block">Dashboard</a>
+                        <a href="{{ url_for('resume.build_resume') }}" class="text-gray-700 hover:text-indigo-600 px-2 py-2 inline-block">Resume Builder</a>
+                        <a href="{{ url_for('interview.practice') }}" class="text-gray-700 hover:text-indigo-600 px-2 py-2 inline-block">Interview Prep</a>
+                        <a href="{{ url_for('auth.logout') }}" class="bg-red-500 text-white px-4 py-2 rounded-lg text-sm">Logout</a>
+                    {% else %}
+                        <a href="{{ url_for('auth.login') }}" class="text-gray-700 hover:text-indigo-600 px-2 py-2 inline-block">Login</a>
+                        <a href="{{ url_for('auth.register') }}" class="bg-indigo-600 text-white px-4 py-2 rounded-lg text-sm">Register</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Global Flash Messages Section -->
+<div class="max-w-7xl mx-auto px-4 mt-4 w-full">
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            {% for category, message in messages %}
+                <div class="flex items-center justify-between p-4 mb-4 rounded-lg border shadow-sm transition-all duration-300
+                    {% if category == 'success' %}
+                        bg-green-50 border-green-200 text-green-800
+                    {% elif category == 'danger' or category == 'error' %}
+                        bg-red-50 border-red-200 text-red-800
+                    {% elif category == 'warning' %}
+                        bg-yellow-50 border-yellow-200 text-yellow-800
+                    {% else %}
+                        bg-blue-50 border-blue-200 text-blue-800
+                    {% endif %}">
+                    
+                    <div class="flex items-center">
+                        <!-- Icon based on category -->
+                        {% if category == 'success' %}
+                            <i class="fas fa-check-circle mr-3"></i>
+                        {% elif category == 'danger' or category == 'error' %}
+                            <i class="fas fa-exclamation-circle mr-3"></i>
+                        {% else %}
+                            <i class="fas fa-info-circle mr-3"></i>
+                        {% endif %}
+                        
+                        <span class="text-sm font-medium">{{ message }}</span>
+                    </div>
+
+                    <!-- Simple Close Button -->
+                    <button type="button" onclick="this.parentElement.style.display='none'" class="ml-auto text-gray-400 hover:text-gray-900 focus:outline-none">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            {% endfor %}
+        {% endif %}
+    {% endwith %}
+</div>
+
+    <div class="max-w-7xl mx-auto px-4 mt-4 w-full">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="p-4 mb-4 text-sm rounded-lg {% if category == 'danger' %}bg-red-100 text-red-700{% else %}bg-green-100 text-green-700{% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <main class="flex-grow">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="bg-white border-t mt-12 py-6 text-center text-gray-500 text-sm">
+        <p class="text-sm text-gray-400">Built with care for Indian job seekers • Crafted by Piyush Hatwar</p>
+        &copy; 2026 CareerBoost India Job Assistant Platform. Made for Indian Students.
+    </footer>
+
+<div class="flex justify-center gap-5 mt-3 text-lg">
+    <a href="https://github.com/student-piyush25" target="_blank" class="text-black hover:opacity-80">
+        <i class="fab fa-github"></i>
+    </a>
+    <a href="https://linkedin.com/in/piyush-hatwar-42p6b227" target="_blank" class="text-blue-600 hover:opacity-80">
+        <i class="fab fa-linkedin"></i>
+    </a>
+    <a href="https://instagram.com/yaa.its_piyush_
+" target="_blank" class="text-pink-500 hover:opacity-80">
+        <i class="fab fa-instagram"></i>
+    </a>
+</div>
+
+    <!-- Professional Footer -->
+     
+<footer class="bg-white border-t border-gray-200 mt-auto">
+    <div class="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
+        <div class="flex flex-col items-center justify-center">
+            
+            <!-- App Branding -->
+            <div class="flex items-center space-x-2 mb-4">
+                <span class="text-xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-indigo-600 to-blue-500">
+                    CareerBoost India
+                </span>
+            </div>
+
+            <!-- Simple Navigation Links -->
+            <div class="flex flex-wrap justify-center gap-x-8 gap-y-2 mb-6">
+                <a href="{{ url_for('main.index') }}" class="text-sm text-gray-500 hover:text-indigo-600 transition">Home</a>
+                <a href="{{ url_for('main.dashboard') }}" class="text-sm text-gray-500 hover:text-indigo-600 transition">Dashboard</a>
+                <a href="{{ url_for('main.premium') }}" class="text-sm text-gray-500 hover:text-indigo-600 transition">Premium Features</a>
+            </div>
+
+            <!-- Divider Line -->
+            <div class="w-16 h-px bg-gray-200 mb-6"></div>
+
+            <!-- Copyright and Tagline -->
+            <p class="text-center text-xs text-gray-400 tracking-wide">
+                &copy; {{ range(2025, 2026)|random }} CareerBoost India. 
+                Designed for Indian Students & Freshers.
+            </p>
+        </div>
+    </div>
+</footer>
+
+</body>
+</html>
