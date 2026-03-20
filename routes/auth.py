@@ -55,5 +55,12 @@ def logout():
     logout_user()
     return redirect(url_for('main.index'))
 
+@auth_bp.route('/upgrade', methods=['POST'])
+@login_required
+def upgrade():
+    current_user.is_premium = True
+    db.session.commit()
+    flash("you are now a Premium user!", "success")
+    return redirect(url_for('main.dashboard'))
 
 
