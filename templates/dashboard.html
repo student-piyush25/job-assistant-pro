@@ -22,7 +22,6 @@
                 Start Building <i class="fas fa-arrow-right ml-2 group-hover:ml-3 transition-all"></i>
             </span>
         </a>
-
         <!-- Card 2: Interview Practice -->
         <a href="{{ url_for('interview.practice') }}" class="group bg-white border border-gray-200 rounded-2xl p-6 shadow-sm hover:shadow-md hover:border-indigo-300 transition-all duration-300">
             <div class="w-12 h-12 bg-green-100 text-green-600 rounded-xl flex items-center justify-center mb-4 group-hover:bg-green-600 group-hover:text-white transition-colors">
@@ -35,8 +34,14 @@
             </span>
         </a>
 
+        {% if current_user.is_authenticated and current_user.is_premium %}
+<span style="background:gold; padding:2px 6px; border-radius:5px; font-size:12px;">
+    PREMIUM
+</span>
+{% endif %}
+        
         <!-- Card 3: Premium Tools -->
-        {% if current_user.is_premium %}
+        {% if current_user.is_authenticated and current_user.is_premium %}
 <div class="relative bg-white border border-indigo-200 rounded-2xl p-6 shadow-sm">
     <div class="absolute top-4 right-4 bg-indigo-600 text-white text-[10px] uppercase font-bold px-2 py-1 rounded">
         Premium Active
@@ -67,7 +72,6 @@
 
 
     </a>
-
     <!-- Job Opportunities Section -->
     <div class="mb-6 flex items-center justify-between">
         <h3 class="text-2xl font-bold text-gray-800">Latest Job Opportunities</h3>
