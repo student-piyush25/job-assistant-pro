@@ -43,7 +43,11 @@ def build_resume():
 @resume_bp.route('/resume/download')
 @login_required
 def download_resume():
-    # Fetch only the resume belonging to the logged-in user
+    
+    if not getattr(current_user, "is_premium", False):
+        flash("Upgrade to premium to download resume PDF", "warning")
+        return redirect(url_for('main.premium'))
+
     resume = Resume.query.filter_by(user_id=current_user.id).first()
     
     if not resume:
