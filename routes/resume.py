@@ -9,10 +9,7 @@ resume_bp = Blueprint('resume', __name__)
 @resume_bp.route('/resume', methods=['GET', 'POST'])
 @login_required
 def build_resume():
-    
-    if not current_user.is_premium:
-        flash("Upgrade to premium to download resume PDF", "warning")
-        return redirect(url_for('main.premium'))
+
 
     resume = Resume.query.filter_by(user_id=current_user.id).first()
 
