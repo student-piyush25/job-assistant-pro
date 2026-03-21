@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="max-w-3xl mx-auto mt-10 bg-white p-6 rounded-xl shadow">
+
+    <h2 class="text-2xl font-bold mb-4 text-center">AI Resume Feedback</h2>
+
+    <form method="POST">
+        <textarea 
+            name="resume_text" 
+            rows="8" 
+            class="w-full border rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-indigo-400"
+            placeholder="Paste your resume here..."></textarea>
+
+        <button 
+            type="submit"
+            class="mt-4 w-full bg-indigo-600 text-white py-2 rounded-lg hover:bg-indigo-700">
+            Get Feedback
+        </button>
+    </form>
+
+    {% if feedback %}
+    <div class="mt-6 p-4 bg-green-100 text-green-800 rounded-lg">
+        {{ feedback }}
+    </div>
+    {% endif %}
+
+</div>
+
+{% endblock %}

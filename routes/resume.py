@@ -104,3 +104,30 @@ def download_resume():
         as_attachment=True, 
         download_name=safe_filename
     )
+    
+    
+@resume_bp.route('/resume/feedback', methods=['GET', 'POST'])
+@login_required
+def resume_feedback():
+    feedback = None
+    
+    if request.method == 'POST':
+        text = request.form.get('resume_text')
+
+        if not text:
+            feedback = "Please enter your resume text."
+
+        elif len(text) < 50:
+            feedback = "Too short. Add education, skills, and projects."
+
+        elif len(text) < 150:
+            feedback = "Decent start. Try adding more technical skills and experience."
+
+        elif "python" not in text.lower():
+            feedback = "Good resume. Add technical skills like Python to improve."
+
+        else:
+            feedback = "Strong resume 👍 Add measurable achievements for better impact."
+
+            
+    return render_template('resume_feedback.html', feedback=feedback)
