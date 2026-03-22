@@ -1,3 +1,5 @@
+import requests
+import os
 from flask import Blueprint, render_template, request, redirect, url_for, flash, send_file
 from flask_login import login_required, current_user
 from models import db, Resume
@@ -105,29 +107,42 @@ def download_resume():
         download_name=safe_filename
     )
     
-    
 @resume_bp.route('/resume/feedback', methods=['GET', 'POST'])
 @login_required
 def resume_feedback():
     feedback = None
-    
+
     if request.method == 'POST':
         text = request.form.get('resume_text')
 
+        # 🔒 Safe premium check
+        if not getattr(current_user, "is_premium", False):
+            feedback = "This is a premium feature. Upgrade to use AI feedback."
+            return render_template('resume_feedback.html', feedback=feedback)
+
         if not text:
             feedback = "Please enter your resume text."
-
-        elif len(text) < 50:
-            feedback = "Too short. Add education, skills, and projects."
-
-        elif len(text) < 150:
-            feedback = "Decent start. Try adding more technical skills and experience."
-
-        elif "python" not in text.lower():
-            feedback = "Good resume. Add technical skills like Python to improve."
-
         else:
-            feedback = "Strong resume 👍 Add measurable achievements for better impact."
+            try:
+                response = requests.post(
+                    "https://openrouter.ai/api/v1/chat/completions",
+                    headers={
+                        "Authorization": f"Bearer {os.getenv('OPENROUTER_API_KEY')}",
+                        "Content-Type": "application/json"
+                    },
+                    json={
+                        "model": "mistralai/mistral-7b-instruct:free",
+                        "messages": [
+                            {"role": "system", "content": "You are a resume expert."},
+                            {"role": "user", "content": f"Give feedback on this resume:\n{text}"}
+                        ]
+                    }
+                )
 
-            
+                data = response.json()
+                feedback = data['choices'][0]['message']['content']
+
+            except Exception as e:
+                feedback = "AI service error. Try again later."
+
     return render_template('resume_feedback.html', feedback=feedback)

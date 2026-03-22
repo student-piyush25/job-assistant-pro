@@ -1,9 +1,10 @@
-
 import os
 from flask import Flask, render_template
 from models import db, User
 from flask_login import LoginManager
+from dotenv import load_dotenv
 
+load_dotenv()
 
 def create_app():
     app = Flask(__name__)
