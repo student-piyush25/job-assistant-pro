@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin
 from datetime import datetime
 
+
 db = SQLAlchemy()
 
 class User(UserMixin, db.Model):
@@ -11,8 +12,12 @@ class User(UserMixin, db.Model):
     password = db.Column(db.String(200), nullable=False)
     name = db.Column(db.String(100), nullable=False)
     
+    
+    ai_usage_count = db.Column(db.Integer, default=0)
+    last_usage_date = db.Column(db.String(20), nullable=True)
     # New future-safe premimum field
     is_premimum = db.Column(db.Boolean, default=False)
+    
     
     # Relationship to link resumes to a user
     resumes = db.relationship('Resume', backref='owner', lazy=True)

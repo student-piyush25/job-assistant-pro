@@ -52,7 +52,12 @@ def dashboard():
     ]
 
     # Pass the user's name and the job list to the template
-    return render_template('dashboard.html', name=current_user.name, jobs=jobs)
+    return render_template(
+        'dashboard.html',
+        name=current_user.name,
+        jobs=jobs,
+        is_premium=getattr(current_user, "is_premium", False)
+    )
 
 # New premimum Route
 @main_bp.route('/premium')

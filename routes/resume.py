@@ -5,12 +5,27 @@ from flask_login import login_required, current_user
 from models import db, Resume
 from fpdf import FPDF
 import io
+from datetime import datetime
 
 resume_bp = Blueprint('resume', __name__)
 
 @resume_bp.route('/resume', methods=['GET', 'POST'])
 @login_required
 def build_resume():
+    
+    today = datetime.today().strftime('%Y-%m-%d')
+
+# reset daily usage
+    if current_user.last_usage_date != today:
+        current_user.ai_usage_count = 0
+        current_user.last_usage_date = today
+        db.session.commit()
+
+# check limit (only for free users)
+    if not getattr(current_user, "is_premium", False):
+        if current_user.ai_usage_count >= 2:
+            flash("Daily limit reached. Upgrade to premium.", "danger")
+            return redirect(url_for('dashboard.dashboard'))
 
 
     resume = Resume.query.filter_by(user_id=current_user.id).first()
