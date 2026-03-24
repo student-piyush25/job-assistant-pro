@@ -62,22 +62,29 @@ def dashboard():
     if resume and resume.skills:
         user_skills = [skill.strip().lower() for skill in resume.skills.split(',')]
 
-        scored_jobs = []
+    scored_jobs = []
 
-        for job in jobs:
-            score = 0
-            title = job['title'].lower()
+    for job in jobs:
+        score = 0
+        title = job['title'].lower()
+        company = job['company'].lower()
 
-            for skill in user_skills:
-                if skill in title:
-                    score += 1
+        for skill in user_skills:
+            if skill in title:
+                score += 2   # strong match
+            if skill in company:
+                score += 1   # weak match
 
-            if score > 0:
-                scored_jobs.append((job, score))
+        if score > 0:
+            scored_jobs.append((job, score))
 
-        scored_jobs.sort(key=lambda x: x[1], reverse=True)
+    scored_jobs.sort(key=lambda x: x[1], reverse=True)
 
-        recommended_jobs = [job for job, score in scored_jobs[:4]]
+    # 🔥 DIFFERENCE HERE
+    if getattr(current_user, "is_premium", False):
+        recommended_jobs = [job for job, score in scored_jobs]  # ALL matches
+    else:
+        recommended_jobs = [job for job, score in scored_jobs[:4]]  # LIMIT
 
     return render_template(
         'dashboard.html',
