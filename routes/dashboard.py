@@ -64,6 +64,7 @@ def dashboard():
         recommended_jobs = [job for job, score in scored_jobs]
     else:
         recommended_jobs = [job for job, score in scored_jobs[:4]]
+        
 
     # ✅ ALWAYS return (outside if/else)
     return render_template(
