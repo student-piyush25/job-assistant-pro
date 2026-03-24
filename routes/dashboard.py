@@ -2,7 +2,7 @@ from extensions import db
 from models import SavedJob
 from flask import request, redirect, url_for, Blueprint, render_template
 from flask_login import login_required, current_user
-
+from models import Resume
 # Define the blueprint for main application navigation
 main_bp = Blueprint('main', __name__)
 dashboard_bp = Blueprint('dashboard', __name__)
@@ -17,13 +17,13 @@ def index():
 @main_bp.route('/dashboard')
 @login_required
 def dashboard():
-    """
-    User dashboard accessible only after login.
-    Displays categorized sample jobs for Indian job seekers.
-    """
-    # Sample job data for Phase-1 (Production-ready placeholder)
-    # In a real app, these could eventually come from a database or API
+
     jobs = [
+        {"title": "Python Developer", "company": "TCS", "link": "#", "type": "Full-time", "deadline": "Apply Soon"},
+        {"title": "Data Analyst", "company": "Infosys", "link": "#", "type": "Internship", "deadline": "Apply Soon"},
+        {"title": "Web Developer", "company": "Wipro", "link": "#", "type": "Full-time", "deadline": "Apply Soon"},
+        {"title": "Backend Engineer", "company": "HCL", "link": "#", "type": "Full-time", "deadline": "Apply Soon"},
+
         {
             'title': 'Full Stack Intern',
             'company': 'Tech Mahindra (Sample)',
@@ -54,11 +54,36 @@ def dashboard():
         }
     ]
 
-    # Pass the user's name and the job list to the template
+    recommended_jobs = []
+
+    resume = Resume.query.filter_by(user_id=current_user.id)\
+        .order_by(Resume.id.desc()).first()
+
+    if resume and resume.skills:
+        user_skills = [skill.strip().lower() for skill in resume.skills.split(',')]
+
+        scored_jobs = []
+
+        for job in jobs:
+            score = 0
+            title = job['title'].lower()
+
+            for skill in user_skills:
+                if skill in title:
+                    score += 1
+
+            if score > 0:
+                scored_jobs.append((job, score))
+
+        scored_jobs.sort(key=lambda x: x[1], reverse=True)
+
+        recommended_jobs = [job for job, score in scored_jobs[:4]]
+
     return render_template(
         'dashboard.html',
         name=current_user.name,
         jobs=jobs,
+        recommended_jobs=recommended_jobs,
         is_premium=getattr(current_user, "is_premium", False)
     )
 
