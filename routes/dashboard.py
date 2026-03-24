@@ -65,6 +65,8 @@ def dashboard():
     else:
         recommended_jobs = [job for job, score in scored_jobs[:4]]
         
+        
+        print("IS PREMIUM:", getattr(current_user, "is_premium", False))
 
     # ✅ ALWAYS return (outside if/else)
     return render_template(
