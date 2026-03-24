@@ -1,6 +1,7 @@
 # Interview pratice logic
 from flask import Blueprint, render_template, request, session, redirect, url_for
 from flask_login import login_required
+from extensions import db
 
 interview_bp = Blueprint('interview', __name__)
 

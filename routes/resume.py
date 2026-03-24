@@ -6,6 +6,7 @@ from models import db, Resume
 from fpdf import FPDF
 import io
 from datetime import datetime
+from extensions import db
 
 resume_bp = Blueprint('resume', __name__)
 

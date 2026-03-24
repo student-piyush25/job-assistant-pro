@@ -1,6 +1,7 @@
 import os
+from models import User
+from extensions import db
 from flask import Flask, render_template
-from models import db, User
 from flask_login import LoginManager
 from dotenv import load_dotenv
 
@@ -11,14 +12,14 @@ def create_app():
     # existing config and blueprints ....
 
     # Configuration
-    app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', 'dev_key')
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv('DATABASE_URL', 'sqlite:///database.db')
+    app.config['SECRET_KEY'] = 'your_secret_key'
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-
-    os.makedirs(app.instance_path, exist_ok=True)
     # Initialize Plugins
     db.init_app(app)
+
+    os.makedirs(app.instance_path, exist_ok=True)
 
     login_manager = LoginManager()
     login_manager.login_view = 'auth.login'
@@ -30,14 +31,16 @@ def create_app():
 
     # Register Blueprints
     from routes.auth import auth_bp
+    from routes.dashboard import dashboard_bp
     from routes.resume import resume_bp
-    from routes.dashboard import main_bp
     from routes.interview import interview_bp
+    from routes.dashboard import main_bp
 
     app.register_blueprint(auth_bp)
+    app.register_blueprint(dashboard_bp)
     app.register_blueprint(resume_bp)
-    app.register_blueprint(main_bp)
     app.register_blueprint(interview_bp)
+    app.register_blueprint(main_bp)
 
     # 404 Error Handler
     @app.errorhandler(404)

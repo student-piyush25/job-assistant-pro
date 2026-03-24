@@ -1,10 +1,17 @@
-
-from flask_sqlalchemy import SQLAlchemy
+from extensions import db
 from flask_login import UserMixin
 from datetime import datetime
 
+class SavedJob(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    
+    job_title = db.Column(db.String(200))
+    company = db.Column(db.String(200))
+    job_link = db.Column(db.String(500))
 
-db = SQLAlchemy()
+    created_at = db.Column(db.DateTime, default=db.func.current_timestamp())
+
 
 class User(UserMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -16,7 +23,7 @@ class User(UserMixin, db.Model):
     ai_usage_count = db.Column(db.Integer, default=0)
     last_usage_date = db.Column(db.String(20), nullable=True)
     # New future-safe premimum field
-    is_premimum = db.Column(db.Boolean, default=False)
+    is_premium = db.Column(db.Boolean, default=False)
     
     
     # Relationship to link resumes to a user

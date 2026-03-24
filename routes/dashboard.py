@@ -1,8 +1,11 @@
-from flask import Blueprint, render_template
+from extensions import db
+from models import SavedJob
+from flask import request, redirect, url_for, Blueprint, render_template
 from flask_login import login_required, current_user
 
 # Define the blueprint for main application navigation
 main_bp = Blueprint('main', __name__)
+dashboard_bp = Blueprint('dashboard', __name__)
 
 @main_bp.route('/')
 def index():
@@ -58,6 +61,31 @@ def dashboard():
         jobs=jobs,
         is_premium=getattr(current_user, "is_premium", False)
     )
+
+@dashboard_bp.route('/save-job', methods=['POST'])
+@login_required
+def save_job():
+    job_title = request.form.get('title')
+    company = request.form.get('company')
+    job_link = request.form.get('link')
+
+    # check if already saved
+    existing = SavedJob.query.filter_by(
+        user_id=current_user.id,
+        job_link=job_link
+    ).first()
+
+    if not existing:
+        new_job = SavedJob(
+            user_id=current_user.id,
+            job_title=job_title,
+            company=company,
+            job_link=job_link
+        )
+        db.session.add(new_job)
+        db.session.commit()
+
+    return redirect(url_for('dashboard.dashboard'))
 
 # New premimum Route
 @main_bp.route('/premium')
