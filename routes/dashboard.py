@@ -75,9 +75,15 @@ def dashboard():
         recommended_jobs = [job for job, score in scored_jobs[:4]]
         
     # ✅ Ensure at least 4 jobs always show
+    # ✅ Ensure at least 4 jobs always show
     if len(recommended_jobs) < 4:
         remaining = [job for job in jobs if job not in recommended_jobs]
-        recommended_jobs += remaining[: (4 - len(recommended_jobs))]
+
+    for job in remaining:
+        job['match'] = 0
+        job['reason'] = "General match"
+
+    recommended_jobs += remaining[: (4 - len(recommended_jobs))]
         
         
     print("IS PREMIUM:", getattr(current_user, "is_premium", False))
@@ -115,7 +121,6 @@ def save_job():
         db.session.commit()
 
     return redirect(url_for("dashboard.dashboard"))
-
 
 # New premimum Route
 @main_bp.route("/premium")
