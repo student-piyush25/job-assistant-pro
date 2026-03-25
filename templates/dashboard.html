@@ -5,237 +5,157 @@
     <div class="max-w-7xl mx-auto">
 
         <!-- Welcome Header -->
-        <div class="mb-10">
-            <h2 class="text-3xl font-bold text-gray-900">Welcome back, {{ name }}! 👋</h2>
-            <p class="text-gray-600 mt-1">Ready to take the next step in your career today?</p>
+        <div class="mb-8">
+            <h2 class="text-3xl font-bold text-gray-900">Welcome back, {{ name }} 👋</h2>
+            <p class="text-gray-600 mt-1">Let’s move you closer to your next job 🚀</p>
         </div>
 
-        <!-- Top 3 Cards -->
+        <!-- Banner -->
+        <!-- Banner -->
+        <div class="bg-gradient-to-r from-indigo-500 to-purple-600 text-white p-4 rounded-xl mb-6 shadow">
+            <h2 class="text-lg font-bold">
+                🚀 Let’s get you hired faster
+            </h2>
+            <p class="text-sm opacity-90">
+                We show jobs you have higher chances to get.
+            </p>
+        </div>
+
+        <!-- Top Cards -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
 
             <!-- Resume Builder -->
-            <a href="{{ url_for('resume.build_resume') }}" class="group relative bg-white/80 backdrop-blur-md border border-gray-100 rounded-2xl p-6 shadow-md 
-           hover:shadow-2xl hover:-translate-y-2 hover:scale-[1.02] 
-           transition-all duration-300 overflow-hidden">
-
-                <div
-                    class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-indigo-500 to-blue-500 opacity-0 group-hover:opacity-100 transition">
-                </div>
-
-                <div
-                    class="w-12 h-12 bg-indigo-100 text-indigo-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition">
-                    <i class="fas fa-file-alt text-xl"></i>
-                </div>
-
-                <h3 class="text-xl font-semibold text-gray-800 mb-2 group-hover:text-indigo-600 transition">Resume
-                    Builder</h3>
-                <p class="text-gray-600 text-sm mb-4">Create a professional ATS-friendly resume.</p>
-
-                <span class="text-indigo-600 font-semibold text-sm group-hover:translate-x-1 transition inline-block">
-                    Start Building →
-                </span>
+            <a href="{{ url_for('resume.build_resume') }}"
+                class="bg-white border rounded-2xl p-6 shadow hover:shadow-lg transition">
+                <h3 class="font-semibold text-lg mb-2">Resume Builder</h3>
+                <p class="text-sm text-gray-500">Create a professional resume</p>
             </a>
 
-
-            {% if not is_premium %}
-            <div class="mt-3 text-xs text-gray-600 bg-gray-100 px-3 py-1 rounded-lg inline-block">
-                Free Plan: {{ 2 - (current_user.ai_usage_count or 0) }} uses left today
+            <!-- AI Feedback -->
+            {% if is_premium %}
+            <a href="{{ url_for('resume.resume_feedback') }}"
+                class="bg-white border rounded-2xl p-6 shadow hover:shadow-lg transition">
+                <h3 class="font-semibold text-lg mb-2">AI Resume Feedback</h3>
+                <p class="text-sm text-gray-500">Get AI insights</p>
+            </a>
+            {% else %}
+            <div class="bg-gray-100 border rounded-2xl p-6 text-center">
+                <p class="text-sm font-semibold mb-2">🔒 Premium Feature</p>
+                <a href="{{ url_for('main.premium') }}" class="text-indigo-600 text-sm">Upgrade</a>
             </div>
             {% endif %}
 
-
-            {% if false %}
-
-            <!-- AI Feedback -->
-            <a href="{{ url_for('resume.resume_feedback') }}" class="group relative bg-white/80 backdrop-blur-md border border-gray-100 rounded-2xl p-6 shadow-md 
-           hover:shadow-2xl hover:-translate-y-2 hover:scale-[1.02] 
-           transition-all duration-300 overflow-hidden">
-
-                <div
-                    class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-purple-500 to-indigo-500 opacity-0 group-hover:opacity-100 transition">
-                </div>
-
-                <div
-                    class="w-12 h-12 bg-purple-100 text-purple-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition">
-                    <i class="fas fa-robot text-xl"></i>
-                </div>
-
-                <h3 class="text-xl font-semibold text-gray-800 mb-2 group-hover:text-purple-600 transition">AI Resume
-                    Feedback</h3>
-                <p class="text-gray-600 text-sm mb-4">Get AI-powered resume insights.</p>
-
-                <span class="text-purple-600 font-semibold text-sm group-hover:translate-x-1 transition inline-block">
-                    Try Now →
-                </span>
+            <!-- Interview -->
+            <a href="{{ url_for('interview.reset_interview') }}"
+                class="bg-white border rounded-2xl p-6 shadow hover:shadow-lg transition">
+                <h3 class="font-semibold text-lg mb-2">Interview Prep</h3>
+                <p class="text-sm text-gray-500">Practice interviews</p>
             </a>
 
-            {% else %}
+        </div>
 
-            <!-- LOCKED CARD -->
-            <div class="relative group bg-white/80 backdrop-blur-md border border-gray-100 rounded-2xl p-6 shadow-md">
+        <!-- Recommended Jobs -->
+        {% if recommended_jobs|length > 0 %}
+        <div class="mb-12">
 
-                <!-- BLUR CONTENT -->
-                <div class="opacity-50 pointer-events-none">
-                    <div
-                        class="w-12 h-12 bg-purple-100 text-purple-600 rounded-xl flex items-center justify-center mb-4">
-                        <i class="fas fa-robot text-xl"></i>
+            <h3 class="text-2xl font-bold text-green-700 mb-2">
+                🎯 Recommended For You
+                {% if is_premium %}
+                <span class="text-xs bg-yellow-100 px-2 py-1 rounded">PRO</span>
+                {% endif %}
+            </h3>
+
+            <p class="text-sm text-gray-600 mb-4">
+                Jobs you have the highest chance to get
+            </p>
+
+            {% if not is_premium %}
+            <p class="text-xs text-gray-500 mb-4">
+                Upgrade to unlock more jobs 🔥
+            </p>
+            {% endif %}
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+
+                {% for job in recommended_jobs %}
+
+                <div class="bg-green-100 border rounded-2xl p-5 shadow">
+
+                    <!-- Match -->
+                    <div class="flex justify-between mb-2">
+                        <span class="text-xs font-bold">{{ job.match }}% Match</span>
+
+                        {% if job.match >= 80 %}
+                        <span class="text-xs bg-green-200 px-2 py-1 rounded">High</span>
+                        {% elif job.match >= 50 %}
+                        <span class="text-xs bg-yellow-200 px-2 py-1 rounded">Medium</span>
+                        {% else %}
+                        <span class="text-xs bg-red-200 px-2 py-1 rounded">Low</span>
+                        {% endif %}
                     </div>
 
-                    <h3 class="text-xl font-semibold text-gray-800 mb-2">AI Resume Feedback</h3>
-                    <p class="text-gray-600 text-sm mb-4">Get AI-powered resume insights.</p>
-                </div>
+                    <!-- Confidence -->
+                    {% if job.match >= 80 %}
+                    <p class="text-xs text-green-700 mb-2">Strong match</p>
+                    {% elif job.match >= 50 %}
+                    <p class="text-xs text-yellow-700 mb-2">Decent match</p>
+                    {% else %}
+                    <p class="text-xs text-red-700 mb-2">Low match</p>
+                    {% endif %}
 
-                <!-- LOCK OVERLAY -->
-                <div
-                    class="absolute inset-0 flex flex-col items-center justify-center bg-white/70 backdrop-blur-sm rounded-2xl">
+                    <!-- Reason -->
+                    <p class="text-xs text-gray-600 mb-2">
+                        Based on: {{ job.reason }}
+                    </p>
 
-                    <i class="fas fa-lock text-2xl text-purple-600 mb-2"></i>
+                    <h4 class="font-semibold">{{ job.title }}</h4>
+                    <p class="text-sm text-gray-500 mb-3">{{ job.company }}</p>
 
-                    <p class="text-sm font-semibold text-gray-800 mb-3">Premium Feature</p>
+                    <!-- Save -->
+                    <form method="POST" action="{{ url_for('dashboard.save_job') }}">
+                        <input type="hidden" name="title" value="{{ job.title }}">
+                        <input type="hidden" name="company" value="{{ job.company }}">
+                        <input type="hidden" name="link" value="{{ job.link }}">
 
-                    <a href="{{ url_for('main.premium') }}"
-                        class="bg-purple-600 text-white px-4 py-2 rounded-lg text-sm hover:bg-purple-700">
-                        Upgrade Now
+                        <button class="text-xs text-indigo-600 mb-2">⭐ Save</button>
+                    </form>
+
+                    <!-- Apply -->
+                    <a href="{{ job.link }}" target="_blank"
+                        class="block text-center bg-green-600 text-white py-2 rounded">
+                        Apply Now
                     </a>
 
                 </div>
+
+                {% endfor %}
+
             </div>
-
-            {% endif %}
-
-            <!-- Interview Prep -->
-            <a href="{{ url_for('interview.reset_interview') }}" class="group relative bg-white/80 backdrop-blur-md border border-gray-100 rounded-2xl p-6 shadow-md 
-           hover:shadow-2xl hover:-translate-y-2 hover:scale-[1.02] 
-           transition-all duration-300 overflow-hidden">
-
-                <div
-                    class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-green-500 to-emerald-500 opacity-0 group-hover:opacity-100 transition">
-                </div>
-
-                <div
-                    class="w-12 h-12 bg-green-100 text-green-600 rounded-xl flex items-center justify-center mb-4 group-hover:scale-110 transition">
-                    <i class="fas fa-comments text-xl"></i>
-                </div>
-
-                <h3 class="text-xl font-semibold text-gray-800 mb-2 group-hover:text-green-600 transition">Interview
-                    Prep</h3>
-                <p class="text-gray-600 text-sm mb-4">Practice HR questions with feedback.</p>
-
-                <span class="text-green-600 font-semibold text-sm group-hover:translate-x-1 transition inline-block">
-                    Start Practice →
-                </span>
-            </a>
-
         </div>
+        {% endif %}
 
-        <!-- Job Section -->
-        <div class="mb-12">
+        <!-- Latest Jobs (only if no recommended) -->
+        {% if recommended_jobs|length == 0 %}
+        <div>
+            <h3 class="text-xl font-bold mb-4">Latest Jobs</h3>
 
-            <div class="flex justify-between items-center mb-6">
-                <div>
-                    <h3 class="text-2xl font-bold text-gray-800">Latest Job Opportunities</h3>
-                    <p class="text-gray-600 text-sm">Curated jobs for you</p>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+
+                {% for job in jobs %}
+                <div class="bg-white border rounded-2xl p-5 shadow">
+                    <h4 class="font-semibold">{{ job.title }}</h4>
+                    <p class="text-sm text-gray-500 mb-3">{{ job.company }}</p>
+
+                    <a href="{{ job.link }}" target="_blank"
+                        class="block text-center bg-indigo-600 text-white py-2 rounded">
+                        Apply
+                    </a>
                 </div>
-                <a href="#" class="text-indigo-600 font-medium hover:text-indigo-700">View All →</a>
-            </div>
-
-            {% if recommended_jobs|length > 0 %}
-
-            <div class="mb-12">
-
-                <h3 class="text-2xl font-bold text-green-700 mb-2">
-                    🎯 Recommended For You
-                    {% if is_premium %}
-                    <span class="text-xs bg-yellow-100 text-yellow-700 px-2 py-1 rounded ml-2">
-                        PRO
-                    </span>
-                    {% endif %}
-                </h3>
-
-                <p class="text-sm text-gray-600 mb-4">
-                    Jobs you have the highest chance to get 🚀
-                </p>
-
-                {% if not is_premium %}
-                <p class="text-xs text-gray-500 mb-4">
-                    Upgrade to premium to unlock more matches 🔥
-                </p>
-                {% endif %}
-
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-
-                    {% for job in recommended_jobs %}
-
-                    <div class="bg-green-100 border border-green-200 rounded-2xl p-5 shadow-sm">
-
-                        <!-- Match Score -->
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="text-xs font-bold text-green-700">
-                                {{ job.match }}% Match
-                            </span>
-
-                            {% if job.match >= 80 %}
-                            <span class="text-xs bg-green-200 text-green-800 px-2 py-1 rounded-full">
-                                High
-                            </span>
-                            {% elif job.match >= 50 %}
-                            <span class="text-xs bg-yellow-200 text-yellow-800 px-2 py-1 rounded-full">
-                                Medium
-                            </span>
-                            {% else %}
-                            <span class="text-xs bg-red-200 text-red-800 px-2 py-1 rounded-full">
-                                Low
-                            </span>
-                            {% endif %}
-                        </div>
-
-                        <!-- Reason -->
-                        <p class="text-xs text-gray-600 mb-2">
-                            Based on: <span class="font-semibold">{{ job.reason }}</span>
-                        </p>
-
-                        <!-- Title -->
-                        <h4 class="text-lg font-semibold mb-2">{{ job.title }}</h4>
-
-                        <!-- Company -->
-                        <p class="text-sm text-gray-500 mb-3">{{ job.company }}</p>
-
-                        <!-- Save -->
-                        <form method="POST" action="{{ url_for('dashboard.save_job') }}">
-                            <input type="hidden" name="title" value="{{ job.title }}">
-                            <input type="hidden" name="company" value="{{ job.company }}">
-                            <input type="hidden" name="link" value="{{ job.link }}">
-
-                            <button type="submit" class="text-xs text-indigo-600 hover:text-indigo-800 mb-2">
-                                ⭐ Save Job
-                            </button>
-                        </form>
-
-                        <!-- Apply -->
-                        <a href="{{ job.link }}" target="_blank"
-                            class="block text-center bg-green-600 text-white py-2 rounded-lg text-sm hover:bg-green-700">
-                            Apply Now
-                        </a>
-
-                    </div>
-
-                    {% endfor %}
-
-                </div>
+                {% endfor %}
 
             </div>
-
-            {% endif %}
-
-
-            <!-- Bottom CTA -->
-            <div class="mt-10 text-center">
-                <a href="#" class="bg-indigo-600 text-white px-6 py-3 rounded-lg hover:bg-indigo-700">
-                    Create Job Alert
-                </a>
-            </div>
-
         </div>
+        {% endif %}
 
     </div>
 </div>
