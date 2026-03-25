@@ -22,7 +22,7 @@ def index():
 def dashboard():
 
     jobs = [
-        {"title": "Python Developer", "company": "TCS", "link": "#", "type": "Full-time", "deadline": "Apply Soon"},
+        {"title": "Python Developer", "company": "TCS", "link": "https://www.tcs.com/careers", "type": "Full-time", "deadline": "Apply Soon"},
         {"title": "Data Analyst", "company": "Infosys", "link": "#", "type": "Internship", "deadline": "Apply Soon"},
         {"title": "Web Developer", "company": "Wipro", "link": "#", "type": "Full-time", "deadline": "Apply Soon"},
         {"title": "Backend Engineer", "company": "HCL", "link": "#", "type": "Full-time", "deadline": "Apply Soon"},
@@ -73,6 +73,11 @@ def dashboard():
         recommended_jobs = [job for job, score in scored_jobs]
     else:
         recommended_jobs = [job for job, score in scored_jobs[:4]]
+        
+    # ✅ Ensure at least 4 jobs always show
+    if len(recommended_jobs) < 4:
+        remaining = [job for job in jobs if job not in recommended_jobs]
+        recommended_jobs += remaining[: (4 - len(recommended_jobs))]
         
         
     print("IS PREMIUM:", getattr(current_user, "is_premium", False))
