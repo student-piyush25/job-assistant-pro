@@ -49,24 +49,33 @@ def dashboard():
         title = job["title"].lower()
         company = job["company"].lower()
 
-        for skill in user_skills:
-            if skill in title:
-                score += 2
-            if skill in company:
-                score += 1
+    matched_skills = []
 
-        if score > 0:
-            scored_jobs.append((job, score))
+    for skill in user_skills:
+        if skill in title:
+            score += 2
+            matched_skills.append(skill)
+        elif skill in company:
+            score += 1
+            matched_skills.append(skill)
 
+    if score > 0:
+        match_percent = min(100, score * 20)
+        job['match'] = match_percent
+        job['reason'] = ", ".join(matched_skills[:3])
+        scored_jobs.append((job, score))
+
+# ✅ NOW sort (after building list)
     scored_jobs.sort(key=lambda x: x[1], reverse=True)
 
+# ✅ THEN assign recommended jobs
     if getattr(current_user, "is_premium", False):
         recommended_jobs = [job for job, score in scored_jobs]
     else:
         recommended_jobs = [job for job, score in scored_jobs[:4]]
         
         
-        print("IS PREMIUM:", getattr(current_user, "is_premium", False))
+    print("IS PREMIUM:", getattr(current_user, "is_premium", False))
 
     # ✅ ALWAYS return (outside if/else)
     return render_template(
