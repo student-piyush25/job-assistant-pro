@@ -23,7 +23,7 @@ def create_order():
         ))
 
         order = client.order.create({
-            "amount": 49900,
+            "amount": 4900,
             "currency": "INR",
             "payment_capture": 1
         })
