@@ -1,3 +1,5 @@
+import razorpay
+from flask import current_app, jsonify
 from extensions import db
 from models import SavedJob
 from flask import request, redirect, url_for, Blueprint, render_template
@@ -7,6 +9,31 @@ from models import Resume
 # Define the blueprint for main application navigation
 main_bp = Blueprint("main", __name__)
 dashboard_bp = Blueprint("dashboard", __name__)
+
+@dashboard_bp.route('/create-order')
+@login_required
+def create_order():
+    try:
+        print("KEY:", current_app.config['RAZORPAY_KEY_ID'])
+        print("SECRET:", current_app.config['RAZORPAY_SECRET'])
+
+        client = razorpay.Client(auth=(
+            current_app.config['RAZORPAY_KEY_ID'],
+            current_app.config['RAZORPAY_SECRET']
+        ))
+
+        order = client.order.create({
+            "amount": 49900,
+            "currency": "INR",
+            "payment_capture": 1
+        })
+
+        return jsonify(order)
+
+    except Exception as e:
+        print("🔥 RAZORPAY ERROR:", str(e))
+        return jsonify({"error": str(e)}), 500
+
 
 
 @main_bp.route("/")
@@ -127,3 +154,13 @@ def save_job():
 @login_required
 def premium():
     return render_template("premium.html")
+
+
+
+
+@dashboard_bp.route('/success')
+@login_required
+def payment_success():
+    current_user.is_premium = True
+    db.session.commit()
+    return redirect(url_for('dashboard.dashboard'))

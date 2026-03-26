@@ -84,11 +84,52 @@
         </span>
     </div>
     {% else %}
-    <div class="text-center mb-10">
-        <button disabled class="px-8 py-3 bg-indigo-600 text-white rounded-x1 font-semibold opacity-60 cursor-not-allowed">
-            Upgrade Coming Soon
-        </button>
+
+    <div class="flex flex-col items-center justify-center mt-10 space-y-4">
+
+    <!-- Main Upgrade Button -->
+    <button id="pay-btn"
+        class="bg-gradient-to-r from-purple-500 to-indigo-600 text-white px-8 py-3 rounded-xl shadow-lg hover:scale-105 transition">
+        🚀 Upgrade Now
+    </button>
+
+    <!-- Coming Soon -->
+    <div class="text-sm text-gray-500">
+        Secure payment powered by Razorpay
     </div>
+
+</div>
+
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<script>
+document.getElementById("pay-btn").onclick = async function () {
+
+    const res = await fetch("/create-order");
+    const data = await res.json();
+
+    const options = {
+        key: "{{ config['RAZORPAY_KEY_ID'] }}",
+        amount: data.amount,
+        currency: "INR",
+        name: "Job Assistant Pro",
+        description: "Premium Upgrade",
+        order_id: data.id,
+
+        handler: function (response) {
+            window.location.href = "/success";
+        }
+    };
+
+    const rzp = new Razorpay(options);
+    rzp.open();
+};
+</script>
+
+
+
+
     {% endif %}
 
     <!-- Back to Dashboard Navigation -->
@@ -110,4 +151,56 @@
 </div>
 
 </div>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    const btn = document.getElementById("pay-btn");
+
+    if (!btn) {
+        console.log("Button not found ❌");
+        return;
+    }
+
+    btn.onclick = async function () {
+
+        try {
+            const res = await fetch("/create-order");
+
+            if (!res.ok) {
+                alert("Server error while creating order");
+                return;
+            }
+
+            const data = await res.json();
+
+            const options = {
+                key: "{{ config['RAZORPAY_KEY_ID'] }}",
+                amount: data.amount,
+                currency: "INR",
+                name: "CareerBoost India",
+                description: "Premium Upgrade",
+                order_id: data.id,
+
+                handler: function (response) {
+                    window.location.href = "/success";
+                }
+            };
+
+            const rzp = new Razorpay(options);
+            rzp.open();
+
+        } catch (error) {
+            console.error("Error:", error);
+            alert("Something went wrong ❌");
+        }
+    };
+
+});
+</script>
+
+
+
 {% endblock %}

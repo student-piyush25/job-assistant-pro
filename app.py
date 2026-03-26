@@ -13,6 +13,8 @@ def create_app():
 
     # Configuration
     app.config['SECRET_KEY'] = 'your_secret_key'
+    app.config['RAZORPAY_KEY_ID'] = os.getenv("RAZORPAY_KEY_ID")
+    app.config['RAZORPAY_SECRET'] = os.getenv("RAZORPAY_SECRET")
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///app.db'
     app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
