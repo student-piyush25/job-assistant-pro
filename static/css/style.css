@@ -1,0 +1,14 @@
+.upgrade-btn {
+    background: linear-gradient(45deg, #6366f1, #a855f7); /* Indigo to Purple */
+    color: white !important;
+    font-weight: bold;
+    transition: 0.3s ease-in-out;
+    border: none;
+    box-shadow: 0 4px 15px rgba(168, 85, 247, 0.4);
+}
+
+.upgrade-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 0 20px rgba(168, 85, 247, 0.7);
+    filter: brightness(1.1);
+}

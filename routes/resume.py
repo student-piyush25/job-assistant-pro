@@ -1,6 +1,14 @@
 import requests
 import os
-from flask import Blueprint, render_template, request, redirect, url_for, flash, send_file
+from flask import (
+    Blueprint,
+    render_template,
+    request,
+    redirect,
+    url_for,
+    flash,
+    send_file,
+)
 from flask_login import login_required, current_user
 from models import db, Resume
 from fpdf import FPDF
@@ -8,39 +16,39 @@ import io
 from datetime import datetime
 from extensions import db
 
-resume_bp = Blueprint('resume', __name__)
+resume_bp = Blueprint("resume", __name__)
 
-@resume_bp.route('/resume', methods=['GET', 'POST'])
+
+@resume_bp.route("/resume", methods=["GET", "POST"])
 @login_required
 def build_resume():
-    
-    today = datetime.today().strftime('%Y-%m-%d')
 
-# reset daily usage
+    today = datetime.today().strftime("%Y-%m-%d")
+
+    # reset daily usage
     if current_user.last_usage_date != today:
         current_user.ai_usage_count = 0
         current_user.last_usage_date = today
         db.session.commit()
 
-# check limit (only for free users)
+    # check limit (only for free users)
     if not getattr(current_user, "is_premium", False):
         if current_user.ai_usage_count >= 2:
             flash("Daily limit reached. Upgrade to premium.", "danger")
-            return redirect(url_for('dashboard.dashboard'))
-
+            return redirect(url_for("dashboard.dashboard"))
 
     resume = Resume.query.filter_by(user_id=current_user.id).first()
 
-    if request.method == 'POST':
+    if request.method == "POST":
         # Collect data from form
         form_data = {
-            'full_name': request.form.get('full_name'),
-            'email': request.form.get('email'),
-            'phone': request.form.get('phone'),
-            'education': request.form.get('education'),
-            'skills': request.form.get('skills'),
-            'experience': request.form.get('experience'),
-            'projects': request.form.get('projects')
+            "full_name": request.form.get("full_name"),
+            "email": request.form.get("email"),
+            "phone": request.form.get("phone"),
+            "education": request.form.get("education"),
+            "skills": request.form.get("skills"),
+            "experience": request.form.get("experience"),
+            "projects": request.form.get("projects"),
         }
 
         if not resume:
@@ -51,26 +59,27 @@ def build_resume():
             # Update existing record fields
             for key, value in form_data.items():
                 setattr(resume, key, value)
-        
+
         db.session.commit()
-        flash('Resume details saved successfully!', 'success')
-        return redirect(url_for('resume.build_resume'))
+        flash("Resume details saved successfully!", "success")
+        return redirect(url_for("resume.build_resume"))
 
-    return render_template('resume_form.html', resume=resume)
+    return render_template("resume_form.html", resume=resume)
 
-@resume_bp.route('/resume/download')
+
+@resume_bp.route("/resume/download")
 @login_required
 def download_resume():
-    
+
     if not getattr(current_user, "is_premium", False):
         flash("Upgrade to premium to download resume PDF", "warning")
-        return redirect(url_for('main.premium'))
+        return redirect(url_for("main.premium"))
 
     resume = Resume.query.filter_by(user_id=current_user.id).first()
-    
+
     if not resume:
-        flash('Please fill out the form and save before downloading.', 'warning')
-        return redirect(url_for('resume.build_resume'))
+        flash("Please fill out the form and save before downloading.", "warning")
+        return redirect(url_for("resume.build_resume"))
 
     # Initialize PDF (fpdf2)
     pdf = FPDF()
@@ -78,19 +87,19 @@ def download_resume():
     pdf.set_auto_page_break(auto=True, margin=15)
 
     # Header: Name (Bold & Large)
-    pdf.set_font("Helvetica", 'B', 24)
-    pdf.cell(0, 15, resume.full_name, ln=True, align='C')
-    
+    pdf.set_font("Helvetica", "B", 24)
+    pdf.cell(0, 15, resume.full_name, ln=True, align="C")
+
     # Header: Contact Info
     pdf.set_font("Helvetica", size=10)
     contact_text = f"Email: {resume.email} | Phone: {resume.phone}"
-    pdf.cell(0, 5, contact_text, ln=True, align='C')
+    pdf.cell(0, 5, contact_text, ln=True, align="C")
     pdf.ln(10)
 
     # Helper function to create professional sections
     def add_section(title, content):
         # Section Title Bar
-        pdf.set_font("Helvetica", 'B', 12)
+        pdf.set_font("Helvetica", "B", 12)
         pdf.set_fill_color(240, 240, 240)  # Light Gray background for ATS readability
         pdf.cell(0, 8, f"  {title.upper()}", ln=True, fill=True)
         pdf.ln(2)
@@ -100,15 +109,19 @@ def download_resume():
         pdf.ln(5)
 
     # Add content sections
-    if resume.education: add_section("Education", resume.education)
-    if resume.skills: add_section("Technical Skills", resume.skills)
-    if resume.experience: add_section("Experience & Internships", resume.experience)
-    if resume.projects: add_section("Key Projects", resume.projects)
+    if resume.education:
+        add_section("Education", resume.education)
+    if resume.skills:
+        add_section("Technical Skills", resume.skills)
+    if resume.experience:
+        add_section("Experience & Internships", resume.experience)
+    if resume.projects:
+        add_section("Key Projects", resume.projects)
 
     # Generate the PDF to memory (Bytes)
     # fpdf2 returns a bytearray/bytes when destination is not specified
     pdf_output = pdf.output()
-    
+
     # Create a file-like buffer for Flask to send
     buffer = io.BytesIO(pdf_output)
     buffer.seek(0)
@@ -117,24 +130,25 @@ def download_resume():
     safe_filename = f"{resume.full_name.replace(' ', '_')}_Resume.pdf"
 
     return send_file(
-        buffer, 
-        mimetype='application/pdf', 
-        as_attachment=True, 
-        download_name=safe_filename
+        buffer,
+        mimetype="application/pdf",
+        as_attachment=True,
+        download_name=safe_filename,
     )
-    
-@resume_bp.route('/resume/feedback', methods=['GET', 'POST'])
+
+
+@resume_bp.route("/resume/feedback", methods=["GET", "POST"])
 @login_required
 def resume_feedback():
     feedback = None
 
-    if request.method == 'POST':
-        text = request.form.get('resume_text')
+    if request.method == "POST":
+        text = request.form.get("resume_text")
 
         # 🔒 Safe premium check
         if not getattr(current_user, "is_premium", False):
             feedback = "This is a premium feature. Upgrade to use AI feedback."
-            return render_template('resume_feedback.html', feedback=feedback)
+            return render_template("resume_feedback.html", feedback=feedback)
 
         if not text:
             feedback = "Please enter your resume text."
@@ -144,21 +158,33 @@ def resume_feedback():
                     "https://openrouter.ai/api/v1/chat/completions",
                     headers={
                         "Authorization": f"Bearer {os.getenv('OPENROUTER_API_KEY')}",
-                        "Content-Type": "application/json"
+                        "Content-Type": "application/json",
                     },
                     json={
                         "model": "mistralai/mistral-7b-instruct:free",
                         "messages": [
                             {"role": "system", "content": "You are a resume expert."},
-                            {"role": "user", "content": f"Give feedback on this resume:\n{text}"}
-                        ]
-                    }
+                            {
+                                "role": "user",
+                                "content": f"Give feedback on this resume:\n{text}",
+                            },
+                        ],
+                    },
                 )
 
                 data = response.json()
-                feedback = data['choices'][0]['message']['content']
+                full_feedback = data["choices"][0]["message"]["content"]
+
+                # ✅ Limit feedback for free users
+                if not getattr(current_user, "is_premium", False):
+                    feedback = (
+                        full_feedback[:150]
+                        + "... [Upgrade to Premium to see the full analysis]"
+                    )
+                else:
+                    feedback = full_feedback
 
             except Exception as e:
                 feedback = "AI service error. Try again later."
 
-    return render_template('resume_feedback.html', feedback=feedback)
+    return render_template("resume_feedback.html", feedback=feedback)

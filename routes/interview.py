@@ -18,6 +18,10 @@ QUESTIONS = [
 @interview_bp.route('/interview', methods=['GET', 'POST'])
 @login_required
 def practice():
+    # ✅ Limit questions based on status
+    from flask_login import current_user
+    active_questions = QUESTIONS if getattr(current_user, "is_premium", False) else QUESTIONS[:3]
+    
     # Initialize question index in user session if not present
     if 'q_index' not in session:
         session['q_index'] = 0
@@ -34,7 +38,7 @@ def practice():
         
         # Check if user wants to go to the next question
         if 'next' in request.form:
-            session['q_index'] = (current_idx + 1) % len(QUESTIONS)
+            session['q_index'] = (current_idx + 1) % len(active_questions)
             return redirect(url_for('interview.practice'))
 
         # Get the user's answer from the form
@@ -48,7 +52,7 @@ def practice():
 
     return render_template(
         'interview.html', 
-        question=QUESTIONS[current_idx], 
+        question=active_questions[current_idx], 
         index=current_idx + 1, 
         total=len(QUESTIONS),
         feedback=feedback,
