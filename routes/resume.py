@@ -154,14 +154,20 @@ def resume_feedback():
             feedback = "Please enter your resume text."
         else:
             try:
+                # 1. Fetch API Key
+                api_key = os.getenv('OPENROUTER_API_KEY')
+                
+                # 2. Make request with REQUIRED OpenRouter headers
                 response = requests.post(
                     "https://openrouter.ai/api/v1/chat/completions",
                     headers={
-                        "Authorization": f"Bearer {os.getenv('OPENROUTER_API_KEY')}",
+                        "Authorization": f"Bearer {api_key}",
                         "Content-Type": "application/json",
+                        "HTTP-Referer": "http://localhost:5000", # Required for OpenRouter Free Models
+                        "X-Title": "AFM Job Assistant",          # Required for OpenRouter Free Models
                     },
                     json={
-                        "model": "mistralai/mistral-7b-instruct:free",
+                        "model": "openrouter/auto",
                         "messages": [
                             {"role": "system", "content": "You are a resume expert."},
                             {
@@ -172,19 +178,20 @@ def resume_feedback():
                     },
                 )
 
-                data = response.json()
-                full_feedback = data["choices"][0]["message"]["content"]
-
-                # ✅ Limit feedback for free users
-                if not getattr(current_user, "is_premium", False):
-                    feedback = (
-                        full_feedback[:150]
-                        + "... [Upgrade to Premium to see the full analysis]"
-                    )
-                else:
+                # 3. Handle response
+                if response.status_code == 200:
+                    data = response.json()
+                    full_feedback = data["choices"][0]["message"]["content"]
+                    
+                    # Since we checked premium above, we give full feedback here
                     feedback = full_feedback
+                else:
+                    # This prints the REAL error to your terminal so we can see it
+                    print(f"🔥 API ERROR {response.status_code}: {response.text}")
+                    feedback = f"AI Service Error (Code: {response.status_code}). Please try again."
 
             except Exception as e:
+                print(f"🔥 Python Error: {str(e)}")
                 feedback = "AI service error. Try again later."
 
     return render_template("resume_feedback.html", feedback=feedback)
